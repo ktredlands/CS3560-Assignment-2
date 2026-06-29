@@ -28,10 +28,3 @@ When a user posts a tweet, all followers are updated automatically.
 
 Visitor:
 StatsVisitor counts users, groups, tweets, and positive tweets.
-
-
-Main Class
-----------
-Run this class:
-
-minitwitter.Driver
