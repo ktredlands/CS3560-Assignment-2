@@ -2,10 +2,13 @@ package code;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -39,6 +42,12 @@ public class UserView extends JFrame
     // listener registered with User so this window refreshes after updates
     private final Runnable refreshListener;
 
+    // displays when this user object was created
+    private final JLabel creationTimeLabel;
+
+    // displays the last time this user's news feed was updated
+    private final JLabel lastUpdateTimeLabel;
+
     /**
      * creates a user view for a specific user
      *
@@ -54,12 +63,14 @@ public class UserView extends JFrame
         this.followingModel = new DefaultListModel<>();
         this.newsFeedModel = new DefaultListModel<>();
         this.refreshListener = () -> SwingUtilities.invokeLater(this::refreshLists);
+        this.creationTimeLabel = new JLabel();
+        this.lastUpdateTimeLabel = new JLabel();
 
         user.addViewListener(refreshListener);
         buildLayout();
         refreshLists();
 
-        setSize(480, 430);
+        setSize(480, 500);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
@@ -71,7 +82,7 @@ public class UserView extends JFrame
     {
         setLayout(new BorderLayout(8, 8));
 
-        JPanel mainPanel = new JPanel(new GridLayout(4, 1, 8, 8));
+        JPanel mainPanel = new JPanel(new GridLayout(5, 1, 8, 8));
         add(mainPanel, BorderLayout.CENTER);
 
         JPanel followPanel = new JPanel(new BorderLayout(6, 6));
@@ -92,6 +103,12 @@ public class UserView extends JFrame
         tweetPanel.add(tweetField, BorderLayout.CENTER);
         tweetPanel.add(postButton, BorderLayout.EAST);
         mainPanel.add(tweetPanel);
+
+        JPanel timePanel = new JPanel(new GridLayout(2, 1));
+        timePanel.setBorder(BorderFactory.createTitledBorder("User Time Information"));
+        timePanel.add(creationTimeLabel);
+        timePanel.add(lastUpdateTimeLabel);
+        mainPanel.add(timePanel);
 
         JList<String> newsFeedList = new JList<>(newsFeedModel);
         JScrollPane newsFeedPane = new JScrollPane(newsFeedList);
@@ -141,6 +158,17 @@ public class UserView extends JFrame
      */
     private void refreshLists()
     {
+        creationTimeLabel.setText("Creation time: " + formatTime(user.getCreationTime()));
+
+        if (user.getLastUpdateTime() == 0)
+        {
+            lastUpdateTimeLabel.setText("Last update time: No tweet updates yet");
+        }
+        else
+        {
+            lastUpdateTimeLabel.setText("Last update time: " + formatTime(user.getLastUpdateTime()));
+        }
+
         followingModel.clear();
         for (User followedUser : user.getFollowing())
         {
@@ -152,6 +180,17 @@ public class UserView extends JFrame
         {
             newsFeedModel.addElement(message);
         }
+    }
+
+    /**
+     * converts millisecond timestamp into readable date and time string
+     * 
+     * @param time timestamp from System.currentTimeMillis()
+     * @return formatted date and time
+     */
+    private String formatTime(long time)
+    {
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(time));
     }
 
     /**

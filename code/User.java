@@ -42,7 +42,7 @@ public class User implements UserComponent, Subject, Observer
     {
         this.id = id;
         this.creationTime = System.currentTimeMillis();
-        this.lastUpdateTime = this.creationTime;
+        this.lastUpdateTime = 0;
         this.following = new ArrayList<>();
         this.followers = new ArrayList<>();
         this.newsFeed = new ArrayList<>();
@@ -116,7 +116,7 @@ public class User implements UserComponent, Subject, Observer
 
         following.add(target);
         target.attach(this);
-        lastUpdateTime = System.currentTimeMillis();
+
         notifyViewListeners();
         
         return true;
@@ -137,6 +137,7 @@ public class User implements UserComponent, Subject, Observer
         String cleanMessage = message.trim();
         ownTweets.add(cleanMessage);
         newsFeed.add(0, id + ": " + cleanMessage);
+        
         lastUpdateTime = System.currentTimeMillis();
 
         notifyObservers(cleanMessage);
@@ -240,5 +241,16 @@ public class User implements UserComponent, Subject, Observer
     public String toString()
     {
         return id;
+    }
+
+    /**
+     * gets the user creation time
+     * 
+     * @return user creation time
+     */
+    @Override
+    public long getCreationTime()
+    {
+        return creationTime;
     }
 }

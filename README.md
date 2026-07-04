@@ -13,7 +13,11 @@ What the Program Does
 - Show total groups
 - Show total tweets
 - Show positive tweet percentage
-
+- Validate IDs for duplicate IDs and spaces
+- Show a user's creation time in the User View
+- Show a user's last update time in the User View
+- Update last update time when a user posts or receives a tweet
+- Show the last updated user from the Admin Control Panel
 
 Design Patterns Used
 --------------------

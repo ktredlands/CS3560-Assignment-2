@@ -62,7 +62,7 @@ public class MiniTwitterService
     public boolean addUser(String userId, UserComponent parent)
     {
         String cleanId = cleanId(userId);
-        if (cleanId == null || findUser(cleanId) != null || findGroup(cleanId) != null)
+        if (cleanId == null)
         {
             return false;
         }
@@ -84,7 +84,7 @@ public class MiniTwitterService
     public boolean addGroup(String groupId, UserComponent parent)
     {
         String cleanId = cleanId(groupId);
-        if (cleanId == null || findUser(cleanId) != null || findGroup(cleanId) != null)
+        if (cleanId == null)
         {
             return false;
         }
@@ -188,20 +188,26 @@ public class MiniTwitterService
      */
     public boolean validateAllIds()
     {
+        List<String> seenIds = new ArrayList<>();
+
         for (User user : users)
         {
-            if (hasInvalidId(user.getId()))
+            if (hasInvalidId(user.getId()) || seenIds.contains(user.getId()))
             {
                 return false;
             }
+
+            seenIds.add(user.getId());
         }
 
         for (UserGroup group : groups)
         {
-            if (hasInvalidId(group.getId()))
+            if (hasInvalidId(group.getId()) || seenIds.contains(group.getId()))
             {
                 return false;
             }
+
+            seenIds.add(group.getId());
         }
 
         return true;
@@ -214,15 +220,11 @@ public class MiniTwitterService
      */
     public User getLastUpdatedUser()
     {
-        if (users.isEmpty())
-        {
-            return null;
-        }
+        User latest = null;
 
-        User latest = users.get(0);
         for (User user : users)
         {
-            if (user.getLastUpdateTime() > latest.getLastUpdateTime())
+            if (user.getLastUpdateTime() > 0 && (latest == null || user.getLastUpdateTime() > latest.getLastUpdateTime()))
             {
                 latest = user;
             }

@@ -2,14 +2,16 @@ package code;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTree;
 import javax.swing.JTextField;
+import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -131,7 +133,7 @@ public class AdminControlPanel extends JFrame
         boolean added = service.addUser(userId, selected);
         if (!added)
         {
-            showMessage("Could not add user. Check for empty ID, duplicate ID, or invalid selection.");
+            showMessage("Could not add user. User ID cannot be empty.");
             return;
         }
 
@@ -150,7 +152,7 @@ public class AdminControlPanel extends JFrame
         boolean added = service.addGroup(groupId, selected);
         if (!added)
         {
-            showMessage("Could not add group. Check for empty ID, duplicate ID, or invalid selection.");
+            showMessage("Could not add group. Group ID cannot be empty.");
             return;
         }
 
@@ -169,7 +171,7 @@ public class AdminControlPanel extends JFrame
         }
         else
         {
-            showMessage("Invalid ID found. IDs cannot contain spaces.");
+            showMessage("Invalid ID found. IDs must be unique and not contain any spaces.");
         }
     }
 
@@ -181,11 +183,22 @@ public class AdminControlPanel extends JFrame
         User latest = service.getLastUpdatedUser();
         if (latest == null)
         {
-            showMessage("There are no users yet.");
+            showMessage("No user has posted or received a tweet yet.");
             return;
         }
 
-        showMessage("Last updated user: " + latest.getId() + "\nLast update time: " + latest.getLastUpdateTime());
+        showMessage("Last updated user: " + latest.getId() + "\nLast update time: " + formatTime(latest.getLastUpdateTime()));
+    }
+
+    /**
+     * converts a millisecond timestamp into a readable date and time string
+     * 
+     * @param time timestamp from System.currentTimeMillis()
+     * @return formatted date and time
+     */
+    private String formatTime(long time)
+    {
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(time));
     }
 
     /**
